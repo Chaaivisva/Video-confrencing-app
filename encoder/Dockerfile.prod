@@ -1,0 +1,7 @@
+FROM node:22.13.0-alpine
+WORKDIR /app
+COPY package.json .
+COPY . .
+RUN npm install  && apk apk --no-cache ffmpeg
+CMD ["npm", "run", "start"]
+

@@ -1,0 +1,35 @@
+services:
+  video_encoding_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - MONGO_URI=mongodb://root:admin@db:27017/screenrecordings?retryWrites=true&writeConcern=majority&authSource=admin
+      - PORT=8000
+    depends_on:
+      - message_queue
+      - db
+
+  message_queue:
+    image: rabbitmq:4.0-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  db:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+volumes:
+  data:
